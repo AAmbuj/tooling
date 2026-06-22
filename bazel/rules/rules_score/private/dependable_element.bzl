@@ -234,10 +234,34 @@ def _create_artifact_symlink(ctx, artifact_name, artifact_file, relative_path):
         ctx.label.name + "/" + artifact_name + "/" + relative_path,
     )
 
-    ctx.actions.symlink(
-        output = output_file,
-        target_file = artifact_file,
-    )
+    if artifact_file.basename.endswith(".idmap.json"):
+        # clickable_plantuml does exact source-key matching against runtime node paths.
+        # Rewrite the source directory to the staged namespace while preserving
+        # the original source basename (and extension: .puml or .plantuml) from JSON.
+        relative_dir = "/".join(relative_path.split("/")[:-1])
+        staged_source_root = artifact_name
+
+        # Unit design fragments are included into units/<unit>.rst; PlantUML paths
+        # resolve in that including-document namespace.
+        if artifact_name.startswith("units/") and artifact_name.endswith("_design"):
+            staged_source_root = "units"
+
+        staged_source_dir = staged_source_root
+        if relative_dir:
+            staged_source_dir = staged_source_root + "/" + relative_dir
+
+        ctx.actions.run_shell(
+            inputs = [artifact_file],
+            outputs = [output_file],
+            # Keep original source basename/ext and replace only its parent path.
+            command = """sed -E 's|("source"[[:space:]]*:[[:space:]]*")([^"]*/)?([^"/]+)"|\\1'"$3"'/\\3"|' "$1" > "$2" """,
+            arguments = [artifact_file.path, output_file.path, staged_source_dir],
+        )
+    else:
+        ctx.actions.symlink(
+            output = output_file,
+            target_file = artifact_file,
+        )
 
     return output_file
 

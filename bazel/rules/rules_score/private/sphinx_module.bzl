@@ -188,11 +188,25 @@ def _score_html_impl(ctx):
             dest_file = ctx.actions.declare_directory(dest_path)
         else:
             dest_file = ctx.actions.declare_file(dest_path)
-        ctx.actions.symlink(
-            output = dest_file,
-            target_file = source_file,
-            progress_message = "Symlinking Sphinx source %{input} to %{output}",
-        )
+
+        # Keep staged source files as real files so Sphinx/docutils realpath
+        # resolution never escapes srcdir (required for strict canonical
+        # PlantUML source-key matching).
+        if not source_file.is_directory:
+            ctx.actions.run_shell(
+                inputs = [source_file],
+                outputs = [dest_file],
+                # Fast path on CoW-capable filesystems; fallback to regular copy.
+                command = "cp --reflink=auto \"$1\" \"$2\" 2>/dev/null || cp \"$1\" \"$2\"",
+                arguments = [source_file.path, dest_file.path],
+                progress_message = "Copying Sphinx source %{input} to %{output}",
+            )
+        else:
+            ctx.actions.symlink(
+                output = dest_file,
+                target_file = source_file,
+                progress_message = "Symlinking Sphinx source %{input} to %{output}",
+            )
         sphinx_source_files.append(dest_file)
         return dest_file
 
