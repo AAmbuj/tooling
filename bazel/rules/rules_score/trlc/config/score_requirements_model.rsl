@@ -71,7 +71,7 @@ tuple FeatReqId {
 }
 
 tuple CompReqSourceId {
-    item    [FeatReq, AssumedSystemReq]
+    item    RequirementSafety
     separator @
     version Integer
 }
@@ -168,12 +168,6 @@ type Mitigation "A measure that reduces the severity or probability of a failure
 }
 
 type AoU "Assumption of Use — a safety-relevant condition that a user must fulfil." extends ControlMeasure {
-}
-
-tuple Measure {
-    item    [ControlMeasure, PreventiveMeasure, Mitigation]
-    separator @
-    version Integer
 }
 
 ///////////////////////////////
