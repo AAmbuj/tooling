@@ -1,6 +1,6 @@
 ---
 name: score-testing
-description: "Testing and test-coverage traceability for S-CORE SEooCs using the rules_score Bazel rules. USE FOR: attaching tests to unit/component/dependable_element targets, annotating GoogleTest cases with lobster-tracing and Given-When-Then RecordProperty calls, requirement-to-test traceability, the test_case_coverage.lock.yaml workflow (bazel run .update vs bazel test drift check), maturity-driven enforcement, and running rules_score tests. Use when writing tests, wiring test targets, annotating tests for traceability, or measuring test-case coverage."
+description: "Testing and coverage traceability for S-CORE SEooCs with the rules_score Bazel rules. USE FOR: attaching tests to unit/component/dependable_element targets, annotating GoogleTest with lobster-tracing and Given-When-Then RecordProperty, requirement-to-test traceability, the test_case_coverage.lock.yaml workflow (run .update vs drift check), maturity-driven enforcement, coverage-drift failures. DO NOT USE FOR: requirement content (score-requirements); unit/component decomposition (score-architecture); safety analysis (score-safety-analysis)."
 argument-hint: "unit/component test or coverage task"
 ---
 
@@ -23,7 +23,7 @@ Testing and test-case-coverage traceability for a **Safety Element out of Contex
 with the `rules_score` Bazel rules. Tests are attached to architectural elements, annotated for
 requirement traceability, and their coverage is locked and verified automatically at build time.
 
-> **Source of truth**: the rule macros under `bazel/rules/rules_score/private/` (`unit.bzl`,
+> **Source of truth**: the rule macros under [`bazel/rules/rules_score/private/`](../../../bazel/rules/rules_score/private) (`unit.bzl`,
 > `component.bzl`, `dependable_element.bzl`), the test-case-coverage tooling under
 > [`bazel/rules/rules_score/src/test_case_coverage/`](../../../bazel/rules/rules_score/src/test_case_coverage),
 > and the runnable examples in
@@ -40,7 +40,8 @@ requirement traceability, and their coverage is locked and verified automaticall
 ## Not for
 
 - Requirement records and traceability model → **score-requirements**
-- Architecture structure and diagrams → **score-architecture**
+- `.trlc` syntax → **score-trlc**
+- Architecture structure → **score-architecture**
 - FMEA / safety analysis → **score-safety-analysis**
 - End-to-end SEooC assembly / choosing which skill to use → **rules-score**
 
@@ -206,7 +207,7 @@ appears in the lock file with at least one covering test case.
 
 ## References
 
-- [`docs/user_guide/validation.rst`](../../../bazel/rules/rules_score/docs/user_guide/validation.rst) — annotation & coverage guide
-- [`docs/tool_reference/test_case_coverage.rst`](../../../bazel/rules/rules_score/docs/tool_reference/test_case_coverage.rst) — lock format, phases, data flow
-- [`examples/minimal/`](../../../bazel/rules/rules_score/examples/minimal) — minimal annotated test
-- [`examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc) — full SEooC with `test_case_coverage.lock.yaml`
+- [`bazel/rules/rules_score/docs/user_guide/validation.rst`](../../../bazel/rules/rules_score/docs/user_guide/validation.rst) — annotation & coverage guide
+- [`bazel/rules/rules_score/docs/tool_reference/test_case_coverage.rst`](../../../bazel/rules/rules_score/docs/tool_reference/test_case_coverage.rst) — lock format, phases, data flow
+- [`bazel/rules/rules_score/examples/minimal/`](../../../bazel/rules/rules_score/examples/minimal) — minimal annotated test
+- [`bazel/rules/rules_score/examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc) — full SEooC with `test_case_coverage.lock.yaml`

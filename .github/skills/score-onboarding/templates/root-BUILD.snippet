@@ -1,0 +1,52 @@
+# *******************************************************************************
+# Copyright (c) 2026 Contributors to the Eclipse Foundation
+#
+# See the NOTICE file(s) distributed with this work for additional
+# information regarding copyright ownership.
+#
+# This program and the accompanying materials are made available under the
+# terms of the Apache License Version 2.0 which is available at
+# https://www.apache.org/licenses/LICENSE-2.0
+#
+# SPDX-License-Identifier: Apache-2.0
+# *******************************************************************************
+#
+# Root BUILD wiring for a repository consuming score_tooling.
+# Keep only the blocks you actually need.
+
+load("@score_tooling//cli_helper:cli_helper.bzl", "cli_helper")
+load("@score_tooling//cr_checker:cr_checker.bzl", "copyright_checker")
+load("@score_tooling//dash:dash.bzl", "dash_license_checker")
+load("@score_tooling//python_basics:defs.bzl", "score_virtualenv")
+load("@score_tooling//skills_sync:sync_skills.bzl", "sync_skills")
+load("@score_tooling//starpls:starpls.bzl", "setup_starpls")
+
+package(default_visibility = ["//visibility:public"])
+
+# Copilot skills + agents shared by score_tooling.
+#   bazel run  //:sync_skills
+#   bazel test //:sync_skills.check
+sync_skills()
+
+# Copyright headers: //:copyright-check and //:copyright-fix
+copyright_checker(
+    name = "copyright",
+    srcs = ["//..."],
+    config = "//path/to:config",
+    template = "//path/to:templates",
+)
+
+# Eclipse DASH license compliance: //:license-check
+dash_license_checker(
+    src = ":requirements_lock",
+    file_type = "requirements",
+)
+
+# Discover every cli_help-tagged target: bazel run //:help
+cli_helper(name = "cli_tools")
+
+# Starlark language server for the IDE: bazel run //:starpls_server
+setup_starpls(name = "starpls_server")
+
+# Python virtualenv for IDE support: bazel run //:ide_support
+score_virtualenv(name = "ide_support")

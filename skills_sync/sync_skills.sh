@@ -13,41 +13,51 @@
 # SPDX-License-Identifier: Apache-2.0
 # *******************************************************************************
 #
-# Syncs (or checks the sync status of) the "score-*" skill directories that
-# score_tooling ships under .github/skills into a downstream repository's own
-# .github/skills directory.
+# Syncs (or checks the sync status of) the Copilot assets that score_tooling
+# ships under .github - the "score-*" skill directories under .github/skills,
+# the "score-*.agent.md" agents under .github/agents and the
+# "score-*.prompt.md" prompts under .github/prompts - into a downstream
+# repository's own .github directory.
 #
 # Usage:
-#   sync_skills.sh sync  <tooling-skill-files...>
-#   sync_skills.sh check <tooling-skill-files...> -- <repo-skill-files...>
+#   sync_skills.sh sync  <tooling-asset-files...>
+#   sync_skills.sh check <tooling-asset-files...> -- <repo-asset-files...>
 #
-# "tooling-skill-files" are the runfiles paths of the files contained in
-# @score_tooling//.github/skills:skills (i.e. the upstream, canonical copies).
-# "repo-skill-files" (check mode only) are the paths, relative to the
-# downstream repository root, of the files currently committed under
-# .github/skills/score-*/** in that repository.
+# "tooling-asset-files" are the runfiles paths of the files contained in
+# @score_tooling//.github:copilot_assets (i.e. the upstream, canonical copies).
+# "repo-asset-files" (check mode only) are the paths, relative to the
+# downstream repository root, of the corresponding files currently committed
+# in that repository.
 
 set -euo pipefail
 
-SKILL_MARKER=".github/skills"
+GITHUB_DIR=".github"
+SKILLS_SUBDIR="skills"
+
+# Asset directories holding individual files rather than skill directories,
+# as "<subdir>:<glob marking a distributed file>".
+FLAT_ASSETS=(
+    "agents:score-*.agent.md"
+    "prompts:score-*.prompt.md"
+)
 
 die() {
     echo "error: $*" >&2
     exit 2
 }
 
-# Given an absolute/runfiles path to a file inside a "*/.github/skills/..."
-# tree, prints the path relative to (and including) the skill directory name,
-# e.g. ".../external/score_tooling+/.github/skills/score-testing/SKILL.md"
-# becomes "score-testing/SKILL.md".
-relative_skill_path() {
+# Given an absolute/runfiles path to a file inside a "*/.github/..." tree,
+# prints the path relative to the .github directory, e.g.
+# ".../external/score_tooling+/.github/skills/score-testing/SKILL.md"
+# becomes "skills/score-testing/SKILL.md".
+relative_asset_path() {
     local f="$1"
     case "$f" in
-        *"${SKILL_MARKER}/"*)
-            echo "${f#*${SKILL_MARKER}/}"
+        *"${GITHUB_DIR}/"*)
+            echo "${f#*${GITHUB_DIR}/}"
             ;;
         *)
-            die "path '$f' does not contain '${SKILL_MARKER}/'"
+            die "path '$f' does not contain '${GITHUB_DIR}/'"
             ;;
     esac
 }
@@ -55,35 +65,56 @@ relative_skill_path() {
 cmd_sync() {
     local dest_root="${BUILD_WORKSPACE_DIRECTORY:-}"
     [ -n "$dest_root" ] || die "must be run via 'bazel run', BUILD_WORKSPACE_DIRECTORY is not set"
-    dest_root="${dest_root}/.github/skills"
+    dest_root="${dest_root}/${GITHUB_DIR}"
     mkdir -p "$dest_root"
 
-    declare -A upstream_dirs=()
+    declare -A upstream_skills=()
+    declare -A upstream_flat=()
 
-    local f rel dir_name dest
+    local f rel rest name dest entry subdir pattern
     for f in "$@"; do
-        rel="$(relative_skill_path "$f")"
-        dir_name="${rel%%/*}"
-        upstream_dirs["$dir_name"]=1
+        rel="$(relative_asset_path "$f")"
+        case "$rel" in
+            "${SKILLS_SUBDIR}/"*)
+                rest="${rel#${SKILLS_SUBDIR}/}"
+                upstream_skills["${rest%%/*}"]=1
+                ;;
+            *)
+                upstream_flat["$rel"]=1
+                ;;
+        esac
 
         dest="${dest_root}/${rel}"
         mkdir -p "$(dirname "$dest")"
         cp -f "$f" "$dest"
     done
 
-    # Remove skill directories that score_tooling no longer ships, so stale
-    # skills do not linger after an upstream removal/rename.
-    local d name
-    for d in "$dest_root"/score-*; do
+    # Remove assets that score_tooling no longer ships, so stale copies do not
+    # linger after an upstream removal/rename.
+    local d
+    for d in "$dest_root/${SKILLS_SUBDIR}"/score-*; do
         [ -d "$d" ] || continue
         name="$(basename "$d")"
-        if [ -z "${upstream_dirs[$name]:-}" ]; then
+        if [ -z "${upstream_skills[$name]:-}" ]; then
             echo "Removing stale score_tooling skill: ${name}"
             rm -rf "$d"
         fi
     done
+    for entry in "${FLAT_ASSETS[@]}"; do
+        subdir="${entry%%:*}"
+        pattern="${entry#*:}"
+        for f in "$dest_root/${subdir}"/$pattern; do
+            [ -f "$f" ] || continue
+            rel="${subdir}/$(basename "$f")"
+            if [ -z "${upstream_flat[$rel]:-}" ]; then
+                echo "Removing stale score_tooling asset: ${rel}"
+                rm -f "$f"
+            fi
+        done
+    done
 
-    echo "Synced score_tooling skills: ${!upstream_dirs[*]}"
+    echo "Synced score_tooling skills: ${!upstream_skills[*]}"
+    echo "Synced score_tooling agents and prompts: ${!upstream_flat[*]}"
 }
 
 cmd_check() {
@@ -107,15 +138,15 @@ cmd_check() {
     declare -A upstream_map=()
     local f rel
     for f in "${tooling_files[@]}"; do
-        rel="$(relative_skill_path "$f")"
+        rel="$(relative_asset_path "$f")"
         upstream_map["$rel"]="$f"
     done
 
     declare -A repo_map=()
     for f in "${repo_files[@]}"; do
         case "$f" in
-            "${SKILL_MARKER}/"score-*)
-                rel="${f#${SKILL_MARKER}/}"
+            "${GITHUB_DIR}/"*/score-*)
+                rel="${f#${GITHUB_DIR}/}"
                 repo_map["$rel"]="$f"
                 ;;
         esac
@@ -127,27 +158,27 @@ cmd_check() {
         up="${upstream_map[$rel]}"
         cf="${repo_map[$rel]:-}"
         if [ -z "$cf" ]; then
-            echo "MISSING:   ${SKILL_MARKER}/${rel}"
+            echo "MISSING:   ${GITHUB_DIR}/${rel}"
             status=1
         elif ! diff -q "$up" "$cf" >/dev/null 2>&1; then
-            echo "OUT OF DATE: ${SKILL_MARKER}/${rel}"
+            echo "OUT OF DATE: ${GITHUB_DIR}/${rel}"
             status=1
         fi
         unset "repo_map[$rel]"
     done
 
     for rel in "${!repo_map[@]}"; do
-        echo "STALE (no longer provided by score_tooling): ${SKILL_MARKER}/${rel}"
+        echo "STALE (no longer provided by score_tooling): ${GITHUB_DIR}/${rel}"
         status=1
     done
 
     if [ "$status" -ne 0 ]; then
         echo ""
-        echo "score_tooling skills are out of sync. Run: bazel run //:sync_skills"
+        echo "score_tooling Copilot assets are out of sync. Run: bazel run //:sync_skills"
         exit 1
     fi
 
-    echo "score_tooling skills are up to date."
+    echo "score_tooling Copilot assets are up to date."
 }
 
 mode="${1:-}"
@@ -165,8 +196,7 @@ case "$mode" in
         # Remaining args are the tooling files, a "--" separator, then the
         # repo's own committed files (from a plain glob(), not location-expanded).
         cmd_check "$@"
-        ;;
-    *)
+        ;;    *)
         die "unknown mode '$mode' (expected 'sync' or 'check')"
         ;;
 esac

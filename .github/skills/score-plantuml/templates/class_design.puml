@@ -1,0 +1,22 @@
+@startuml <unit_name>_class_diagram
+
+' Checked against the parsed C++ implementation: type names, members, method
+' signatures and enum literals must match the real code.
+
+namespace <dependency_unit> {
+    class <DependencyType> <<final>>
+}
+
+namespace <unit_name> {
+    class <TypeName> <<final>> {
+        --
+        - <member_name>_ : <MemberType>
+        --
+        + <TypeName>(<param> : <ParamType>)
+        + <MethodName>() : <ReturnType>
+    }
+}
+
+<TypeName> --> <DependencyType> : uses
+
+@enduml

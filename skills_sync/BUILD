@@ -13,4 +13,7 @@
 
 package(default_visibility = ["//visibility:public"])
 
-exports_files(["sync_skills.sh"])
+exports_files([
+    "sync_skills.sh",
+    "make_pack.sh",
+])

@@ -1,6 +1,6 @@
 ---
 name: score-safety-analysis
-description: "Step-by-step workflow for creating or extending a FMEA-based safety analysis in TRLC format for S-CORE software components. Use when asked to: add failure modes, create FTA diagrams, add control measures, or validate the safety analysis traceability chain. Covers clustering, FailureMode records, FTA PlantUML files, ControlMeasure records, BUILD wiring, and trlc validation."
+description: "FMEA-based safety analysis for S-CORE components. USE FOR: identifying failure modes per public API operation with HAZOP guide words, reasoning effect→root cause, choosing preventive/control/mitigation measures and assumptions of use, writing FailureMode/ControlMeasure records, building the FTA tree, wiring the fmea and dependability_analysis targets. DO NOT USE FOR: FTA PlantUML syntax (score-plantuml); .trlc syntax (score-trlc); functional requirements (score-requirements)."
 argument-hint: "interface or component name to analyse"
 ---
 
@@ -53,7 +53,7 @@ analysis, not the analysis itself:
 
 Reason about failures *before* writing records. This is a safety-engineering activity governed by
 the S-CORE Safety Analysis in
-[`docs/user_guide/dependability_analysis.rst`](../../../bazel/rules/rules_score/docs/user_guide/dependability_analysis.rst)
+[`bazel/rules/rules_score/docs/user_guide/dependability_analysis.rst`](../../../bazel/rules/rules_score/docs/user_guide/dependability_analysis.rst)
 (*Performing the Analysis*). See **Authoring guidance** below.
 
 **Collaborate when severity, plausibility, or measure sufficiency is uncertain** — propose the

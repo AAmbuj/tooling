@@ -1,6 +1,6 @@
 ---
 name: rules-score
-description: "Central entry point for building a Safety Element out of Context (SEooC) with the rules_score Bazel rules. USE FOR: creating or assembling a dependable_element end to end, understanding the full requirements → architecture → units → tests → safety-analysis workflow, wiring all rules_score targets together, and deciding which specialized skill to use for each work product. Delegates to score-requirements, score-architecture, score-testing, and score-safety-analysis. Use when scaffolding a new SEooC, adding a component/unit across all layers, or coordinating multi-layer changes."
+description: "Entry point for building a Safety Element out of Context (SEooC) with the rules_score Bazel rules. USE FOR: assembling a dependable_element end to end, the requirements→architecture→units→tests→safety-analysis workflow, wiring rules_score targets, and choosing which score-* skill owns a work product. Use when scaffolding a new SEooC or coordinating multi-layer changes."
 argument-hint: "the SEooC / dependable element to build or extend"
 ---
 
@@ -33,14 +33,23 @@ then **delegates the details of each work product to a specialized skill**.
 
 ## Delegation Map
 
-Use this skill to coordinate; open the specialized skill for the actual work:
+Use this skill to coordinate; open the specialized skill for the actual work. Load **one** skill
+per task — do not preload siblings.
 
 | You are working on… | Use skill |
 |---------------------|-----------|
-| `.trlc` requirement records, `ScoreReq` model, traceability, `assumed_system_requirements` / `feature_requirements` / `component_requirements` / `assumptions_of_use` | **score-requirements** |
-| PlantUML diagrams, `architectural_design` / `unit` / `unit_design` / `component` / `dependable_element` structure, architecture/API/sequence validations | **score-architecture** |
+| Requirement content, level, ASIL, allocation, traceability chain | **score-requirements** |
+| `.trlc` / `.rsl` syntax, record fields, version tuples, parse errors | **score-trlc** |
+| `architectural_design` / `unit` / `unit_design` / `component` / `dependable_element` structure, architecture/API/sequence validations | **score-architecture** |
+| Writing or fixing any `.puml`, stereotypes and aliases, clickable diagrams, parser CLI | **score-plantuml** |
 | GoogleTest `lobster-tracing` + Given-When-Then, `test_case_coverage.lock.yaml`, attaching tests | **score-testing** |
 | FMEA, `FailureMode` / `ControlMeasure` / FTA, `fmea` / `dependability_analysis` | **score-safety-analysis** |
+| `.rst` / `.md` pages, page placement next to diagrams, `sphinx_module`, `glossary`, doc build | **score-docs** |
+| `MODULE.bazel` wiring, toolchains, `sync_skills`, scaffolding the first SEooC | **score-onboarding** |
+
+> Downstream repositories do not receive this skill (it is not named `score-*`). There, the
+> distributed `score-tooling` agent (`.github/agents/score-tooling.agent.md`) performs the same
+> routing role.
 
 ---
 
@@ -60,6 +69,7 @@ with a traceability report.
 | Units & Components | `unit`, `unit_design`, `component` | score-architecture |
 | Tests & Coverage | `tests` attr, `test_case_coverage_lock` | score-testing |
 | Dependability Analysis | `fmea`, `dependability_analysis` | score-safety-analysis |
+| Narrative docs & glossary | `sphinx_module`, `glossary` | score-docs |
 | SEooC assembly | `dependable_element` | this skill |
 
 ### Hierarchy

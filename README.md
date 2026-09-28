@@ -40,6 +40,55 @@ See the individual README files for detailed usage instructions and configuratio
 | **tools** | Formatters & Linters | [README](tools/README.md) |
 | **coverage** | Unified LLVM source-based coverage (C++ + Rust) | [README](coverage/README.md) |
 
+## Copilot Skills & Agent
+
+`score_tooling` ships GitHub Copilot customizations for the `rules_score` workflow: a router
+agent under `.github/agents`, task prompts under `.github/prompts`, and specialized skills under
+`.github/skills`. Consumer repos pull them in with one target so Copilot does not have to
+re-derive the same guidance per prompt.
+
+```starlark
+load("@score_tooling//skills_sync:sync_skills.bzl", "sync_skills")
+
+sync_skills()
+```
+
+```bash
+bazel run  //:sync_skills        # copy into .github/{agents,prompts,skills}
+bazel test //:sync_skills.check  # CI guard against drift
+```
+
+| Asset | Covers |
+|-------|--------|
+| `score-tooling` (agent) | Routes a task to exactly one skill |
+| `score-safety-analysis-review` (prompt) | Reviews an existing FMEA, reports findings by severity |
+| `score-safety-analysis-rollout` (prompt) | Creates or extends an FMEA, with sign-off before writing |
+| `score-onboarding` | `MODULE.bazel`, toolchains, first SEooC scaffold |
+| `score-requirements` | Requirement content, levels, ASIL, allocation |
+| `score-trlc` | TRLC / `.rsl` syntax and the `ScoreReq` field tables |
+| `score-architecture` | Component/unit decomposition, validators |
+| `score-plantuml` | `.puml` conventions, parser CLI, clickable diagrams |
+| `score-testing` | GoogleTest traceability, test-case coverage lock |
+| `score-safety-analysis` | FMEA, `FailureMode` / `ControlMeasure`, FTA |
+| `score-docs` | `.rst` authoring, page placement, glossary |
+
+Only `score-*` names are distributed; anything else stays local. Details:
+[skills_setup.rst](bazel/rules/rules_score/docs/skills_setup.rst).
+
+### Offline pack
+
+For users who cannot build with Bazel, `//.github:copilot_pack` produces a self-contained
+archive with the same agent, prompts and skills plus an installer:
+
+```bash
+bazel build //.github:copilot_pack
+tar -xzf bazel-bin/.github/score-copilot-pack.tar.gz
+cd score-copilot-pack && ./install.sh          # -> ~/.copilot/{agents,skills}
+```
+
+Use `./install.sh --workspace /path/to/repo` to install into `<repo>/.github` instead. The pack
+needs no network, no Bazel and no dependency on `score_tooling`; see `INSTALL.md` inside it.
+
 ## Coverage
 
 The `coverage/` module provides the reusable LLVM source-based coverage pipeline

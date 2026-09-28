@@ -1,0 +1,13 @@
+@startuml
+
+' Namespace nesting must mirror the package/component nesting of static_design.puml
+' so the fully qualified interface name matches.
+
+namespace <seooc_alias> {
+
+    interface "<PublicInterfaceName>" as <PublicInterfaceName> {
+        + <OperationName>(): <ReturnType>
+    }
+}
+
+@enduml

@@ -1,0 +1,23 @@
+@startuml
+
+' Resolved at Sphinx render time via the PlantUML include path. Write it exactly
+' like this, with no directory prefix.
+!include fta_metamodel.puml
+
+' $TopEvent alias MUST equal <Package>.<FailureModeRecordName> from failure_modes.trlc.
+$TopEvent("<Human readable failure>", "<Package>.<FailureModeRecordName>")
+
+' Gates connect upward to the alias given as their second argument.
+$OrGate("OG1", "<Package>.<FailureModeRecordName>")
+
+' Intermediate events are diagram-local; the alias is free-form.
+$IntermediateEvent("<Intermediate cause>", "IE1", "OG1")
+
+' $BasicEvent alias MUST equal <Package>.<MeasureRecordName> from control_measures.trlc.
+$BasicEvent("<Root cause>", "<Package>.<MeasureRecordName>", "OG1")
+
+$AndGate("AG1", "IE1")
+$BasicEvent("<Root cause A>", "<Package>.<MeasureA>", "AG1")
+$BasicEvent("<Root cause B>", "<Package>.<MeasureB>", "AG1")
+
+@enduml

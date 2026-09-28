@@ -1,0 +1,27 @@
+@startuml static_design
+
+' One <<SEooC>> package at the root. Nesting defines the fully qualified name
+' that must match the Bazel component/unit target tree.
+
+package "<Display Name>" as <seooc_alias> <<SEooC>> {
+
+    component "<Component Display Name>" as <component_alias> <<component>> {
+
+        component "<Unit Display Name>" as <unit_alias> <<unit>>
+        component "<Other Unit>" as <other_unit_alias> <<unit>>
+
+        ' Interface between two units inside this component.
+        ' Declare it in internal_api.puml with the same FQN.
+        interface "<InternalInterfaceName>" as <InternalInterfaceName>
+        <unit_alias> -l-( <InternalInterfaceName>
+        <other_unit_alias> -r- <InternalInterfaceName>
+    }
+}
+
+' Externally visible interface. Declare it in public_api.puml.
+interface "<PublicInterfaceName>" as <PublicInterfaceName>
+
+' ")-" provides, "-(" requires. Only <<component>>/<<SEooC>> may provide.
+<seooc_alias> )-d- <PublicInterfaceName>
+
+@enduml

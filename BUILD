@@ -22,10 +22,15 @@ exports_files([
 copyright_checker(
     name = "copyright",
     # Whole-repo scope via a git exclude-magic pathspec: every file tracked
-    # by git is checked except .github/skills (those SKILL.md / README.md
-    # files are distributed verbatim to downstream repos via //:sync_skills
-    # and are not subject to this repo's copyright checker).
+    # by git is checked except .github/skills, .github/agents,
+    # .github/prompts and .github/pack (those files are distributed verbatim
+    # to downstream repos via //:sync_skills or the offline
+    # //.github:copilot_pack archive, and are not subject to this repo's
+    # copyright checker).
     srcs = [
+        ":(exclude).github/agents/**",
+        ":(exclude).github/pack/**",
+        ":(exclude).github/prompts/**",
         ":(exclude).github/skills/**",
     ],
     config = "//cr_checker/resources:config",

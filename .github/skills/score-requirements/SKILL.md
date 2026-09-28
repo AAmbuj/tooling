@@ -1,6 +1,6 @@
 ---
 name: score-requirements
-description: "Requirements engineering for S-CORE projects with TRLC and the rules_score Bazel rules. USE FOR: writing .trlc requirement records (AssumedSystemReq, FeatReq, CompReq, AoU), understanding the ScoreReq requirements model (.rsl), traceability chains (AssumedSystemReq → FeatReq → CompReq), version pinning, ASIL classification, wiring assumed_system_requirements / feature_requirements / component_requirements / assumptions_of_use Bazel targets, requirement allocation to components, embedding images/diagrams in descriptions, and validating requirements with bazel test. Use when working on requirements, .trlc/.rsl files, traceability, or safety classifications."
+description: "Requirements engineering for S-CORE projects. USE FOR: what a requirement says and its level (AssumedSystemReq/FeatReq/CompReq/AoU), quality and atomicity, ASIL classification, the derived_from traceability chain and version pinning, allocation to components/dependable elements, wiring assumed_system_requirements/feature_requirements/component_requirements/assumptions_of_use targets. DO NOT USE FOR: .trlc/.rsl syntax (score-trlc); architecture (score-architecture); FMEA (score-safety-analysis); test traceability (score-testing)."
 argument-hint: "requirement level (system/feature/component) or record to add"
 ---
 
@@ -26,7 +26,7 @@ Bazel build/test rules.
 
 > **Source of truth**: the `ScoreReq` model in
 > [`bazel/rules/rules_score/trlc/config/score_requirements_model.rsl`](../../../bazel/rules/rules_score/trlc/config/score_requirements_model.rsl)
-> and the rule macros under `bazel/rules/rules_score/private/`. A complete, standalone working
+> and the rule macros under [`bazel/rules/rules_score/private/`](../../../bazel/rules/rules_score/private). A complete, standalone working
 > example lives in [`bazel/rules/rules_score/examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc).
 > When source and documentation disagree, the source wins.
 
@@ -41,9 +41,11 @@ Bazel build/test rules.
 
 ## Not for
 
+- `.trlc` / `.rsl` syntax, field tables, parse and type errors → **score-trlc**
 - Architecture diagrams, `unit` / `component` / `dependable_element` structure → **score-architecture**
 - FMEA / FailureMode / ControlMeasure / FTA safety analysis → **score-safety-analysis**
 - Test annotation and coverage → **score-testing**
+- RST prose and glossary pages → **score-docs**
 - End-to-end SEooC assembly / choosing which skill to use → **rules-score**
 
 ---
@@ -77,7 +79,7 @@ Requirements work has **two phases, in order** — do not jump straight to TRLC 
 
 Decide *what* the requirement says and *at which level* it belongs. This is an engineering
 decision governed by the definition of the requirements process in
-[`docs/user_guide/requirements.rst`](../../../bazel/rules/rules_score/docs/user_guide/requirements.rst)
+[`bazel/rules/rules_score/docs/user_guide/requirements.rst`](../../../bazel/rules/rules_score/docs/user_guide/requirements.rst)
 (*Writing Good Requirements*). Refine **top-down**: `AssumedSystemReq` → `FeatReq` → `CompReq`.
 
 **Collaborate when the level or intent is unclear — do NOT silently invent a requirement.**
@@ -96,7 +98,7 @@ add version-pinned `derived_from`, and add the file to the requirement rule's `s
 
 ## Authoring guidance: writing good requirements
 
-Authoritative rules: [`requirements_guidelines.md`](../../../validation/ai_checker/guidelines/requirements/requirements_guidelines.md)
+Authoritative rules: [`validation/ai_checker/guidelines/requirements/requirements_guidelines.md`](../../../validation/ai_checker/guidelines/requirements/requirements_guidelines.md)
 (applied by the AI quality check) and *Writing Good Requirements* in the doc above.
 
 **Template:** *subject* **shall** *verb* [*object*] [*parameter*] [*condition*] — at least one
@@ -401,7 +403,7 @@ trlc_requirements_ai_test(
 
 ## References
 
-- [`score_requirements_model.rsl`](../../../bazel/rules/rules_score/trlc/config/score_requirements_model.rsl) — the `ScoreReq` schema (source of truth)
-- [`examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc) — complete working example
-- [`docs/user_guide/requirements.rst`](../../../bazel/rules/rules_score/docs/user_guide/requirements.rst) — narrative guide
+- [`bazel/rules/rules_score/trlc/config/score_requirements_model.rsl`](../../../bazel/rules/rules_score/trlc/config/score_requirements_model.rsl) — the `ScoreReq` schema (source of truth)
+- [`bazel/rules/rules_score/examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc) — complete working example
+- [`bazel/rules/rules_score/docs/user_guide/requirements.rst`](../../../bazel/rules/rules_score/docs/user_guide/requirements.rst) — narrative guide
 - [TRLC](https://github.com/bmw-software-engineering/trlc) — language and tooling

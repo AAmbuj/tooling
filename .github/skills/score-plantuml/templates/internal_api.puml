@@ -1,0 +1,15 @@
+@startuml
+
+' Interfaces used only between components/units inside the SEooC boundary.
+' Namespace nesting mirrors static_design.puml.
+
+namespace <seooc_alias> {
+  namespace <component_alias> {
+
+    interface "<InternalInterfaceName>" as <InternalInterfaceName> <<interface>> {
+      {abstract} <OperationName>(<ParamName> : <ParamType>) : <ReturnType>
+    }
+  }
+}
+
+@enduml

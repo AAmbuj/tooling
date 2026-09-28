@@ -1,6 +1,6 @@
 ---
 name: score-architecture
-description: "Software architectural design for S-CORE SEooCs using the rules_score Bazel rules. USE FOR: writing PlantUML static/dynamic/public_api/internal_api diagrams, structuring dependable_element → component → unit hierarchies, wiring architectural_design / unit / unit_design / component / dependable_element targets, PlantUML stereotype and interface/port conventions, the declared-vs-implemented architecture consistency check, integrity levels, certified scope, and requirement allocation to architectural elements. Use when working on architecture, .puml files, component/unit structure, or the rules_score architecture rules."
+description: "Architectural design for S-CORE SEooCs with the rules_score Bazel rules. USE FOR: dependable_element→component→unit decomposition, wiring architectural_design/unit/unit_design/component/dependable_element targets, the build-time architecture validators (incl. declared-vs-implemented consistency), integrity levels, certified scope, requirement allocation. DO NOT USE FOR: PlantUML syntax (score-plantuml); requirement content (score-requirements); FMEA (score-safety-analysis); test wiring (score-testing)."
 argument-hint: "component/unit or diagram to model"
 ---
 
@@ -28,7 +28,7 @@ into Sphinx documentation with a traceability report.
 it.** Always design first (collaboratively, in PlantUML), agree the decomposition with the user,
 *then* write the Bazel targets. See **Workflow** below.
 
-> **Source of truth**: the rule macros under `bazel/rules/rules_score/private/`
+> **Source of truth**: the rule macros under [`bazel/rules/rules_score/private/`](../../../bazel/rules/rules_score/private)
 > (`architectural_design.bzl`, `unit.bzl`, `unit_design.bzl`, `component.bzl`,
 > `dependable_element.bzl`), the validator specifications in
 > [`validation/core/docs/specifications/`](../../../validation/core/docs/specifications) (what is
@@ -46,9 +46,11 @@ it.** Always design first (collaboratively, in PlantUML), agree the decompositio
 
 ## Not for
 
+- PlantUML syntax, stereotypes, aliases, `!include`, parse errors → **score-plantuml**
 - Requirement records and traceability → **score-requirements**
 - FMEA / FailureMode / FTA safety analysis → **score-safety-analysis**
 - Test annotation and coverage → **score-testing**
+- RST prose placed next to diagrams, glossary → **score-docs**
 - End-to-end SEooC assembly / choosing which skill to use → **rules-score**
 
 ---
@@ -131,8 +133,7 @@ that the decomposition is *good*. Deciding what becomes a `component` vs a `unit
 is a design activity governed by the S-CORE
 [Architecture Design process area](https://eclipse-score.github.io/process_description/main/process_areas/architecture_design/index.html);
 the authoritative distillation lives in
-[`docs/user_guide/architectural_design.rst`](../../../bazel/rules/rules_score/docs/user_guide/architectural_design.rst)
-(*Determining Components and Units*). Decompose **top-down** from the SEooC's
+[`bazel/rules/rules_score/docs/user_guide/architectural_design.rst`](../../../bazel/rules/rules_score/docs/user_guide/architectural_design.rst)(*Determining Components and Units*). Decompose **top-down** from the SEooC's
 public API and requirements until every leaf is a testable unit.
 
 **A `unit` is the smallest independently verifiable element.** Model as a unit when ALL hold:
@@ -212,7 +213,7 @@ safety_software_seooc_example )-d- SampleLibraryAPI
 @enduml
 ```
 
-*(Verbatim from [`examples/seooc/design/static_design.puml`](../../../bazel/rules/rules_score/examples/seooc/design/static_design.puml). The three `<<component>>`/`<<unit>>`
+*(Verbatim from `examples/seooc/design/static_design.puml`. The three `<<component>>`/`<<unit>>`
 names — `component_example`, `unit_1`, `unit_2`, `sub_component_example` — are exactly the Bazel
 target names, and `safety_software_seooc_example` matches the `dependable_element` name.)*
 
@@ -259,7 +260,7 @@ cross-checked against each other and against the implementation.
 | **Public API** | `public_api` | Static diagram (top-level interfaces bound from the SEooC) | Interfaces the SEooC exposes; also feeds `FailureMode.interface` traceability |
 | **Internal API** | `internal_api` | Static component diagram; sequences | Interfaces between components/units inside the SEooC |
 
-Real example diagrams (verbatim, from [`examples/seooc/design/`](../../../bazel/rules/rules_score/examples/seooc/design)):
+Real example diagrams (verbatim, from `examples/seooc/design/`):
 
 ```text
 ' dynamic_design.puml — sequence diagram
@@ -354,7 +355,7 @@ it is emitted verbatim (no root anchor, no scope) so it always matches itself ac
   Bazel package, not the identifier itself.
 
 > Full rule set (root-anchor construction, qualified-reference resolution, uniqueness errors):
-> `plantuml/parser/docs/element-identifiers.md` (this repo) — the resolver's authoring guide.
+> [`plantuml/parser/docs/element-identifiers.md`](../../../plantuml/parser/docs/element-identifiers.md) (this repo) — the resolver's authoring guide.
 
 ---
 
@@ -379,7 +380,7 @@ load(
 
 ### `architectural_design`
 
-One target bundles every diagram kind (from [`examples/seooc/design/BUILD`](../../../bazel/rules/rules_score/examples/seooc/design/BUILD)):
+One target bundles every diagram kind (from `examples/seooc/design/BUILD`):
 
 ```starlark
 architectural_design(
@@ -450,7 +451,7 @@ unit_design(
 ```
 
 The unit-design class diagram is validated against the C++ implementation (see **Active
-validations**). Real class diagram from [`unit_1/docs/unit_1_class_diagram.puml`](../../../bazel/rules/rules_score/examples/seooc/unit_1/docs/unit_1_class_diagram.puml):
+validations**). Real class diagram from `unit_1/docs/unit_1_class_diagram.puml`:
 
 ```text
 @startuml unit_1_class_diagram
@@ -469,7 +470,7 @@ not-yet-used character such as `^` so it becomes a sub-subsection.
 
 ### `unit`
 
-From [`examples/seooc/unit_1/BUILD`](../../../bazel/rules/rules_score/examples/seooc/unit_1/BUILD):
+From `examples/seooc/unit_1/BUILD`:
 
 ```starlark
 unit(
@@ -497,7 +498,7 @@ cc_test(
 
 ### `component`
 
-From [`examples/seooc/BUILD`](../../../bazel/rules/rules_score/examples/seooc/BUILD) — a component can
+From `examples/seooc/BUILD` — a component can
 contain both units and nested components:
 
 ```starlark
@@ -522,7 +523,7 @@ component(
 
 ### `dependable_element` (SEooC)
 
-From [`examples/seooc/BUILD`](../../../bazel/rules/rules_score/examples/seooc/BUILD):
+From `examples/seooc/BUILD`:
 
 ```starlark
 dependable_element(
@@ -546,7 +547,7 @@ dependable_element(
 > themselves use the `ScoreReq.Asil` enum, which only has `QM`/`B`/`D` (see **score-requirements**).
 
 For the smallest possible SEooC wired end-to-end in a single BUILD file, see
-[`examples/minimal/BUILD`](../../../bazel/rules/rules_score/examples/minimal/BUILD).
+`examples/minimal/BUILD`.
 
 ---
 
@@ -566,7 +567,7 @@ the source of truth for what is checked and which notation is valid**.
 | **Sequence ↔ internal API** | `sequence_internal_api.md` | sequence method calls ↔ `internal_api` interfaces (method name, consumer/provider role, interface coverage) | sensitive |
 | **Class design ↔ implementation** | `class_design_implementation.md` | `unit_design` class diagram ↔ C++ implementation (entities, methods, variables, enums, relationships, templates) | sensitive + type normalization |
 
-Additional element-level checks (see [`docs/user_guide/general.rst`](../../../bazel/rules/rules_score/docs/user_guide/general.rst)):
+Additional element-level checks (see [`bazel/rules/rules_score/docs/user_guide/general.rst`](../../../bazel/rules/rules_score/docs/user_guide/general.rst)):
 
 | Check | Rule | Effect |
 |-------|------|--------|
@@ -608,9 +609,9 @@ Traceability from a feature requirement down to implementing components runs thr
 
 ## References
 
-- [`examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc) — complete working SEooC (`BUILD`, `design/`, `unit_1/`)
-- [`examples/minimal/`](../../../bazel/rules/rules_score/examples/minimal) — smallest end-to-end SEooC in one BUILD file
+- [`bazel/rules/rules_score/examples/seooc/`](../../../bazel/rules/rules_score/examples/seooc) — complete working SEooC (`BUILD`, `design/`, `unit_1/`)
+- [`bazel/rules/rules_score/examples/minimal/`](../../../bazel/rules/rules_score/examples/minimal) — smallest end-to-end SEooC in one BUILD file
 - [`validation/core/docs/specifications/`](../../../validation/core/docs/specifications) — normative validator specs (source of truth for notation)
-- [`docs/user_guide/architectural_design.rst`](../../../bazel/rules/rules_score/docs/user_guide/architectural_design.rst) — narrative guide
-- [`docs/user_guide/general.rst`](../../../bazel/rules/rules_score/docs/user_guide/general.rst) — element-level validation reference
+- [`bazel/rules/rules_score/docs/user_guide/architectural_design.rst`](../../../bazel/rules/rules_score/docs/user_guide/architectural_design.rst) — narrative guide
+- [`bazel/rules/rules_score/docs/user_guide/general.rst`](../../../bazel/rules/rules_score/docs/user_guide/general.rst) — element-level validation reference
 - [PlantUML](https://plantuml.com/) — diagram notation

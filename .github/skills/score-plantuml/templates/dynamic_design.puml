@@ -1,0 +1,12 @@
+@startuml
+
+' Participants must be units that exist in the static design, with the same alias.
+participant "<Unit Display Name>" as <unit_alias> <<unit>>
+participant "<Other Unit>" as <other_unit_alias> <<unit>>
+
+' Each call must name an operation declared on the interface connecting the two
+' units in internal_api.puml / public_api.puml.
+<unit_alias> -> <other_unit_alias> : <OperationName>()
+return <ReturnType>
+
+@enduml
