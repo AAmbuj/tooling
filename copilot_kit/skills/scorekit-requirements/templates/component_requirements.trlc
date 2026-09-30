@@ -1,0 +1,17 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: requirements/component_requirements.trlc
+// One file per component: the whole file is allocated to one component() target.
+package MyModule
+
+import ScoreReq
+
+ScoreReq.CompReq COMP_001 {
+    description  = "The <unit or interface> shall <verb> <object> <parameter/condition>."
+    safety       = ScoreReq.Asil.B
+    derived_from = [MyModule.FEAT_001@1]
+    version      = 1
+}

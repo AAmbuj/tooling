@@ -1,0 +1,15 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: docs/aous.trlc
+package MyModule
+
+import ScoreReq
+
+ScoreReq.AoU AOU_001 {
+    description = "The integrator shall <obligation> <bound/condition>."
+    safety      = ScoreReq.Asil.B
+    version     = 1
+}

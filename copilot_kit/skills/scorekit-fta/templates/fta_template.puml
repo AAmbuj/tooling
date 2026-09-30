@@ -1,0 +1,24 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: safety_analysis/fta_fm_dowork_loss.puml
+'
+' One file per FailureMode. $TopEvent alias = FailureMode FQN.
+' Every $BasicEvent alias = FQN of a ControlMeasure (or AoU) record.
+' Gate/intermediate aliases are local names (OG1, AG1, IE1 ...).
+@startuml
+
+!include fta_metamodel.puml
+
+$TopEvent("DoWork returns no result", "MyModule.FM_DOWORK_LOSS")
+
+$OrGate("OG1", "MyModule.FM_DOWORK_LOSS")
+
+$BasicEvent("Worker thread hangs", "MyModule.CM_DOWORK_WATCHDOG", "OG1")
+
+' Example of a combined cause (all children required):
+' $IntermediateEvent("Result buffer lost", "IE1", "OG1")
+' $AndGate("AG1", "IE1")
+' $BasicEvent("Buffer overwritten", "MyModule.CM_BUFFER_CRC", "AG1")
+' $BasicEvent("Caller ignores error code", "MyModule.AOU_CHECK_ERRORS", "AG1")
+
+@enduml

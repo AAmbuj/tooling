@@ -1,0 +1,15 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: design/public_api.puml
+'
+' The namespace equals the dependable_element name. FailureMode.interface uses
+' "<namespace>.<Interface>.<Method>", e.g. "my_element.MyApi.DoWork".
+@startuml
+
+namespace my_element {
+    interface "MyApi" as MyApi {
+        + DoWork(): int
+    }
+}
+
+@enduml

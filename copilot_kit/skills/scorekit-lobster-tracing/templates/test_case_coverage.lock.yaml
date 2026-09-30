@@ -1,0 +1,16 @@
+# Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: Apache-2.0
+# Destination: test_case_coverage.lock.yaml (next to the component BUILD)
+#
+# Do not hand-edit: create an empty file, set component(test_case_coverage_lock=...),
+# then run `bazel run //:my_component.update` and review/commit the result.
+schema_version: 3
+requirements:
+  - id: MyModule.COMP_001
+    version: '1'
+    description: The <unit or interface> shall <verb> <object> <parameter/condition>.
+    test_cases:
+      - uid: //MyUnitTest:DoWorkReturnsResult
+        given: a default-constructed MyUnit
+        when: DoWork is called once
+        then: it returns the number of calls so far (1)

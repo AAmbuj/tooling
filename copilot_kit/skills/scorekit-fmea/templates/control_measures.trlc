@@ -1,0 +1,17 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: safety_analysis/control_measures.trlc
+// One record per FTA $BasicEvent; the record FQN equals the $BasicEvent alias.
+package MyModule
+
+import ScoreReq
+
+ScoreReq.ControlMeasure CM_DOWORK_WATCHDOG {
+    description = "A watchdog shall detect a missing DoWork result within 10 ms and report an error to the caller."
+    safety      = ScoreReq.Asil.B
+    mitigates   = "MyModule.FM_DOWORK_LOSS"
+    version     = 1
+}

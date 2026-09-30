@@ -1,0 +1,16 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: requirements/asr.trlc
+package MyModule
+
+import ScoreReq
+
+ScoreReq.AssumedSystemReq ASR_001 {
+    description = "The system shall provide <capability> to <consumer> within <bound>."
+    safety      = ScoreReq.Asil.B
+    rationale   = "<why the SEooC receives this need from its environment>"
+    version     = 1
+}
