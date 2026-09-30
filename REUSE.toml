@@ -62,3 +62,14 @@ SPDX-License-Identifier = "Apache-2.0"
 path = ["plantuml/**/*.svg"]
 SPDX-FileCopyrightText = "Copyright (c) 2026 Contributors to the Eclipse Foundation"
 SPDX-License-Identifier = "Apache-2.0"
+
+[[annotations]]
+path = ["copilot_kit/VERSION",
+        "copilot_kit/agents/**",
+        "copilot_kit/instructions/**",
+        "copilot_kit/overlays/**",
+        "copilot_kit/prompts/**",
+        "copilot_kit/skills/**"
+ ]
+SPDX-FileCopyrightText = "Copyright (c) 2026 Contributors to the Eclipse Foundation"
+SPDX-License-Identifier = "Apache-2.0"

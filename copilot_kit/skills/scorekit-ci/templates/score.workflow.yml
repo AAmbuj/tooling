@@ -1,0 +1,26 @@
+# Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: Apache-2.0
+# Destination: .github/workflows/score.yml
+name: score
+on:
+  pull_request:
+  push:
+    branches: [main]
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Build and test (requirements, architecture, traceability, tests)
+        run: bazel test //...
+      - name: Export dependable_element docs/reports
+        run: |
+          bazel build //... \
+            --aspects=@score_tooling//bazel/aspects/rules_score:dependable_element_export.bzl%dependable_element_export_aspect \
+            --output_groups=+dependable_element_export
+          mkdir -p export
+          find -L bazel-bin -type d -name _dependable_element_export -exec cp -rL --parents {} export/ \;
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dependable-element-export
+          path: export

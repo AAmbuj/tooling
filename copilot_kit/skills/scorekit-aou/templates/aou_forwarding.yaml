@@ -1,0 +1,8 @@
+# Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: Apache-2.0
+# Destination: aou_forwarding.yaml (next to the dependable_element BUILD)
+#
+# List only AoUs received from deps that this element cannot handle itself.
+forwarded_aous:
+  - aou_id: "OtherPackage.AOU_ID"
+    justification: "<why this element cannot satisfy it and who must>"

@@ -1,0 +1,24 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: safety_analysis/fta_fm_dowork_loss.puml
+'
+' $FailureMode references one or more FailureMode FQNs.
+' $RootCause aliases generate RootCause records; close each with a CompReq, AoU or Mitigation.
+' Gate/intermediate aliases are local names (OG1, AG1, IE1 ...).
+@startuml fta_fm_dowork_loss
+
+!include fta_metamodel.puml
+
+$FailureMode("DoWork returns no result", "MyModule.FM_DOWORK_LOSS")
+
+$OrGate("OG1", "MyModule.FM_DOWORK_LOSS")
+
+$RootCause("Worker thread hangs", "WORKER_THREAD_HANGS", "OG1")
+
+' Example of a combined cause (all children required):
+' $IntermediateEvent("Result buffer lost", "IE1", "OG1")
+' $AndGate("AG1", "IE1")
+' $RootCause("Buffer overwritten", "BUFFER_OVERWRITTEN", "AG1")
+' $RootCause("Caller ignores error code", "CALLER_IGNORES_ERROR", "AG1")
+
+@enduml

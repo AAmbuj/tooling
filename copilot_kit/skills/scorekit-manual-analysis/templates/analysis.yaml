@@ -1,0 +1,20 @@
+# Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: Apache-2.0
+# Destination: <package>/analysis.yaml
+requirements:
+  - "MyModule.COMP_001"
+steps:
+  - action:
+    description: Identify all callers of MyUnit::DoWork
+  - automated_action:
+    description: List reverse dependencies of the unit
+    command: "{bazel} cquery \"rdeps(//..., {target})\" --notool_deps"
+    args:
+      - name: bazel
+        default: bazel
+      - name: target
+        default: "//:my_unit_lib"
+  - assertion:
+    description: Does every caller check the returned value?
+    positive: Yes
+    negative: No

@@ -1,0 +1,18 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: docs/aous.trlc
+package MyModule
+
+import ScoreReq
+// Import the generated FTA package only when an AoU closes a root cause.
+// import my_safety_analysis_fta
+
+ScoreReq.AoU AOU_001 {
+    description = "The integrator shall <obligation> <bound/condition>."
+    safety      = ScoreReq.Asil.B
+    // root_causes = [my_safety_analysis_fta.ROOT_CAUSE_ALIAS]
+    version     = 1
+}

@@ -1,0 +1,7 @@
+# Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+# SPDX-License-Identifier: Apache-2.0
+# Destination: .bazelrc (append)
+
+common --registry=https://raw.githubusercontent.com/eclipse-score/bazel_registry/main/
+common --registry=https://bcr.bazel.build
+common --extra_toolchains=//bazel/toolchains:my_libclang_toolchain

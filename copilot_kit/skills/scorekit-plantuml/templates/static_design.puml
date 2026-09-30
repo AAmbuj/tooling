@@ -1,0 +1,19 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: design/static_design.puml
+'
+' Every alias with <<SEooC>>/<<component>>/<<unit>> must equal the Bazel target
+' name of the matching dependable_element/component/unit (same nesting).
+@startuml static_design
+
+package "My Element" as my_element <<SEooC>> {
+    component "My Component" as my_component <<component>> {
+        component "My Unit" as my_unit <<unit>>
+    }
+}
+
+interface "MyApi" as MyApi
+
+my_element )-d- MyApi
+
+@enduml

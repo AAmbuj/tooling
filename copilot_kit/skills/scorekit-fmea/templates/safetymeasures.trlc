@@ -1,0 +1,19 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: safety_analysis/safetymeasures.trlc
+// Use Mitigation only when the referenced RootCause does not apply in this context.
+package MyModule
+
+import ScoreReq
+import safety_analysis_fta
+
+ScoreReq.Mitigation MIT_WORKER_THREAD_HANGS {
+    description   = "The worker thread cannot hang in this configuration."
+    safety        = ScoreReq.Asil.B
+    justification = "The component uses a bounded, synchronous worker implementation."
+    root_causes   = [safety_analysis_fta.WORKER_THREAD_HANGS]
+    version       = 1
+}

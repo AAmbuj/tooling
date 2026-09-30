@@ -1,0 +1,20 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: safety_analysis/failure_modes.trlc
+// One record per distinct interface/effect. FTA diagrams reference this record
+// in the $FailureMode macro.
+package MyModule
+
+import ScoreReq
+
+ScoreReq.FailureMode FM_DOWORK_LOSS {
+    guidewords    = [ScoreReq.Guideword.LossOfFunction]
+    description   = "DoWork does not return a result when invoked."
+    failureeffect = "The caller receives no result and cannot reach its safe state in time."
+    interface     = "my_element.MyApi.DoWork"
+    safety        = ScoreReq.Asil.B
+    version       = 1
+}

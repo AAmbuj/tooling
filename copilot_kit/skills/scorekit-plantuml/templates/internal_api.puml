@@ -1,0 +1,16 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: design/internal_api.puml
+'
+' Internal interfaces live in the namespace path of their owning element.
+@startuml
+
+namespace my_element {
+  namespace my_component {
+    interface "InternalApi" as InternalApi <<interface>> {
+      {abstract} GetData(): Data*
+    }
+  }
+}
+
+@enduml

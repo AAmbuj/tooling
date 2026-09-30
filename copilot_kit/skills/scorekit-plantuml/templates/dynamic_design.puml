@@ -1,0 +1,16 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: design/dynamic_design.puml
+'
+' Participants must be units from the static diagram. For nested units use a
+' qualified label: participant "a : my_component::unit_a" as unit_a <<unit>>
+' Use the reserved name ExternalEndpoint for actors outside the architecture.
+@startuml
+
+participant "Unit A" as unit_a <<unit>>
+participant "Unit B" as unit_b <<unit>>
+
+unit_a -> unit_b : GetData()
+return Data*
+
+@enduml

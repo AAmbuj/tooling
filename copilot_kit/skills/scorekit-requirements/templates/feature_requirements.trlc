@@ -1,0 +1,16 @@
+/********************************************************************************
+ * Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ ********************************************************************************/
+// Destination: requirements/feature_requirements.trlc
+package MyModule
+
+import ScoreReq
+
+ScoreReq.FeatReq FEAT_001 {
+    description  = "The <feature> shall <verb> <object> <parameter/condition>."
+    safety       = ScoreReq.Asil.B
+    derived_from = [MyModule.ASR_001@1]
+    version      = 1
+}

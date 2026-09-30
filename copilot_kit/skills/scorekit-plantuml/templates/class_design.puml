@@ -1,0 +1,13 @@
+' Copyright (c) <YEAR> <COPYRIGHT HOLDER>
+' SPDX-License-Identifier: Apache-2.0
+' Destination: design/class_design.puml
+'
+' unit_design class diagram; validated against the C++ implementation.
+@startuml
+
+class MyUnit {
+    - calls_ : int
+    + DoWork() : int
+}
+
+@enduml
